@@ -7,22 +7,17 @@
 export type TypedEventListener<
 	M extends Record<string, any>,
 	T extends keyof M,
-> = (evt: TypedEvent<M, T>) => void | Promise<void>;
+> = (evt: CustomEvent<M[T]>) => void | Promise<void>;
 
-type CustomEventInit<T = any> = EventInit &
-	(T extends never ? {} : { detail: T });
+export type CustomEventInit<T = any> = EventInit &
+	(T extends undefined ? {} : { detail: T });
 
-/**
- * Event object delivered to listeners for a given event name.
- *
- * If the mapped payload type is `never`, listeners receive a plain `Event`.
- * Otherwise, listeners receive `CustomEvent<Payload>`.
- */
-export type TypedEvent<M extends Record<string, any>, T extends keyof M> = [
-	M[T],
-] extends [never]
-	? Event
-	: CustomEvent<M[T]>;
+export type CustomEvent<T = any> = Event &
+	(T extends undefined
+		? {}
+		: {
+				detail: T;
+			});
 
 /**
  * An object that can be passed to the `listener` parameter of {@link TypedEventTarget.addEventListener} and {@link TypedEventTarget.removeEventListener}.
@@ -34,7 +29,7 @@ export interface TypedEventListenerObject<
 	M extends Record<string, any>,
 	T extends keyof M,
 > {
-	handleEvent: (evt: TypedEvent<M, T>) => void | Promise<void>;
+	handleEvent: (evt: CustomEvent<M[T]>) => void | Promise<void>;
 }
 
 /**
@@ -127,8 +122,8 @@ export class TypedEventTarget<
 	 */
 	public dispatchTypedEvent<T extends keyof M>(
 		type: T,
-		...args: M[T] extends never | undefined
-			? [init?: CustomEventInit<never>]
+		...args: M[T] extends undefined
+			? [init?: CustomEventInit<undefined>]
 			: [init: CustomEventInit<M[T]>]
 	): boolean {
 		return super.dispatchEvent(new CustomEvent<M[T]>(type as string, args[0]));
