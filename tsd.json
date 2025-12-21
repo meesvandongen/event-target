@@ -1,4 +1,0 @@
-{
-  "$schema": "https://json.schemastore.org/tsd.json",
-  "testFiles": ["typed-event-target.test-d.ts"]
-}

@@ -7,7 +7,19 @@
 export type TypedEventListener<
 	M extends Record<string, any>,
 	T extends keyof M,
-> = (evt: CustomEvent<M[T]>) => void | Promise<void>;
+> = (evt: TypedEvent<M, T>) => void | Promise<void>;
+
+/**
+ * Event object delivered to listeners for a given event name.
+ *
+ * If the mapped payload type is `never`, listeners receive a plain `Event`.
+ * Otherwise, listeners receive `CustomEvent<Payload>`.
+ */
+export type TypedEvent<M extends Record<string, any>, T extends keyof M> = [
+	M[T],
+] extends [never]
+	? Event
+	: CustomEvent<M[T]>;
 
 /**
  * An object that can be passed to the `listener` parameter of {@link TypedEventTarget.addEventListener} and {@link TypedEventTarget.removeEventListener}.
@@ -19,7 +31,7 @@ export interface TypedEventListenerObject<
 	M extends Record<string, any>,
 	T extends keyof M,
 > {
-	handleEvent: (evt: CustomEvent<M[T]>) => void | Promise<void>;
+	handleEvent: (evt: TypedEvent<M, T>) => void | Promise<void>;
 }
 
 /**
@@ -33,13 +45,9 @@ export interface TypedEventListenerObject<
  * @template T The type of event to listen for (has to be keyof `M`).
  */
 export type TypedEventListenerOrEventListenerObject<
-	M extends ValueIsCustomEventInit<M>,
+	M extends Record<string, any>,
 	T extends keyof M,
 > = TypedEventListener<M, T> | TypedEventListenerObject<M, T>;
-
-type ValueIsCustomEventInit<T> = {
-	[key in keyof T]: CustomEventInit<any>;
-};
 
 /**
  * TypeScript-friendly version of {@link EventTarget}
@@ -116,8 +124,8 @@ export class TypedEventTarget<
 	 */
 	public dispatchTypedEvent<T extends keyof M>(
 		type: T,
-		init?: CustomEventInit<M[T]>,
+		init: CustomEventInit<M[T]>,
 	): boolean {
-		return super.dispatchEvent(new CustomEvent<M>(type as string, init));
+		return super.dispatchEvent(new CustomEvent<M[T]>(type as string, init));
 	}
 }
