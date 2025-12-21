@@ -9,6 +9,9 @@ export type TypedEventListener<
 	T extends keyof M,
 > = (evt: TypedEvent<M, T>) => void | Promise<void>;
 
+type CustomEventInit<T = any> = EventInit &
+	(T extends never ? {} : { detail: T });
+
 /**
  * Event object delivered to listeners for a given event name.
  *
@@ -124,8 +127,10 @@ export class TypedEventTarget<
 	 */
 	public dispatchTypedEvent<T extends keyof M>(
 		type: T,
-		init: CustomEventInit<M[T]>,
+		...args: M[T] extends never | undefined
+			? [init?: CustomEventInit<never>]
+			: [init: CustomEventInit<M[T]>]
 	): boolean {
-		return super.dispatchEvent(new CustomEvent<M[T]>(type as string, init));
+		return super.dispatchEvent(new CustomEvent<M[T]>(type as string, args[0]));
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@mvd/event-target",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "Type-safe EventTarget for TypeScript: strongly-typed event names and CustomEvent.detail.",
 	"type": "module",
 	"sideEffects": false,
@@ -16,7 +16,7 @@
 	"scripts": {
 		"build": "bunup",
 		"prepublishOnly": "npm run build && publint",
-		"test:types": "tsd"
+		"typecheck": "tsc --noEmit"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.10",

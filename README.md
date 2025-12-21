@@ -6,7 +6,7 @@ This package exports a single class, `TypedEventTarget<M>`, which behaves like t
 
 - `addEventListener` / `removeEventListener` only accept event names from your map
 - listeners receive a correctly typed `CustomEvent<Detail>`
-- `dispatchEvent` is **deprecated** (untyped); use `dispatchTypedEvent(type, init)` instead
+- `dispatchEvent` is **deprecated** (untyped); use `dispatchTypedEvent(type, init?)` instead
 
 ## Install
 
@@ -53,7 +53,7 @@ bus.addEventListener("progress", (e) => {
 });
 
 //  strongly typed dispatch
-bus.dispatchTypedEvent("ready", {});
+bus.dispatchTypedEvent("ready");
 bus.dispatchTypedEvent("message", { detail: "hello" });
 bus.dispatchTypedEvent("progress", { detail: { loaded: 5, total: 20 } });
 
@@ -92,7 +92,7 @@ export class Clock extends TypedEventTarget<ClockEvents> {
     if (!this.#timer) return;
     clearInterval(this.#timer);
     this.#timer = undefined;
-    this.dispatchTypedEvent("stopped", {});
+    this.dispatchTypedEvent("stopped");
   }
 }
 
@@ -160,9 +160,11 @@ t.addEventListener("saved", async (e) => {
 
 ## Dispatching options
 
-`dispatchTypedEvent(type, init)` accepts a standard `CustomEventInit<Detail>`:
+`dispatchTypedEvent(type, init)` accepts a standard `CustomEventInit<Detail>`.
 
-- `detail` (typed)
+If an event’s payload type is `never`, then `init` is **optional**.
+
+- `detail` (typed; **required** unless the payload is `never`)
 - `bubbles`, `cancelable`, `composed`
 
 ```ts
@@ -179,45 +181,23 @@ t.dispatchTypedEvent("changed", {
   bubbles: true,
   cancelable: true,
 });
-```
 
-## API summary
-
-```ts
-class TypedEventTarget<M> extends EventTarget {
-  addEventListener<T extends keyof M & string>(
-    type: T,
-    listener:
-      | ((evt: CustomEvent<M[T]>) => void | Promise<void>)
-      | { handleEvent: (evt: CustomEvent<M[T]>) => void | Promise<void> }
-      | null,
-    options?: boolean | AddEventListenerOptions,
-  ): void;
-
-  removeEventListener<T extends keyof M & string>(
-    type: T,
-    listener:
-      | ((evt: CustomEvent<M[T]>) => void | Promise<void>)
-      | { handleEvent: (evt: CustomEvent<M[T]>) => void | Promise<void> }
-      | null,
-    options?: boolean | EventListenerOptions,
-  ): void;
-
-  /** @deprecated */
-  dispatchEvent(event: Event): boolean;
-
-  dispatchTypedEvent<T extends keyof M>(
-    type: T,
-    init: CustomEventInit<M[T]>,
-  ): boolean;
+// For `never` payload events, you can omit init entirely:
+interface OtherEvents {
+  ready: never;
 }
+
+const other = new TypedEventTarget<OtherEvents>();
+other.dispatchTypedEvent("ready");
+
+// ...or still pass options (without `detail`):
+other.dispatchTypedEvent("ready", { bubbles: true });
 ```
 
-## Why not just use `EventTarget`?
+## Difference with [`typescript-event-target`](https://www.npmjs.com/package/typescript-event-target)
 
-The DOM `EventTarget` API is runtime-great but type-light:
+This is a fork of the `typescript-event-target` package with some differences:
 
-- event names are just `string`
-- listeners typically see `Event` and you end up casting to `CustomEvent<T>`
-
-With `TypedEventTarget`, those casts move into the library so your app code stays clean and safe.
+- This package only supports `CustomEvent` (no plain `Event`).
+- This package constructs CustomEvents internally. Thus, the event type does not
+  have to be added twice.
