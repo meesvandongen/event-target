@@ -7,7 +7,7 @@ export type CustomEvent<T = any> = Event &
 /**
  * A function that can be passed to the `listener` parameter of {@link TypedEventTarget.addEventListener} and {@link TypedEventTarget.removeEventListener}.
  *
- * @template M A map of event types to their respective event classes.
+ * @template M A map of event types to their respective event detail types.
  * @template T The type of event to listen for (has to be keyof `M`).
  */
 export type TypedEventListener<
@@ -18,7 +18,7 @@ export type TypedEventListener<
 /**
  * An object that can be passed to the `listener` parameter of {@link TypedEventTarget.addEventListener} and {@link TypedEventTarget.removeEventListener}.
  *
- * @template M A map of event types to their respective event classes.
+ * @template M A map of event types to their respective event detail types.
  * @template T The type of event to listen for (has to be keyof `M`).
  */
 export interface TypedEventListenerObject<
@@ -35,7 +35,7 @@ export interface TypedEventListenerObject<
  *
  * Can be either an object with a handleEvent() method, or a JavaScript function.
  *
- * @template M A map of event types to their respective event classes.
+ * @template M A map of event types to their respective event detail types.
  * @template T The type of event to listen for (has to be keyof `M`).
  */
 export type TypedEventListenerOrEventListenerObject<
@@ -46,7 +46,7 @@ export type TypedEventListenerOrEventListenerObject<
 /**
  * TypeScript-friendly version of {@link EventTarget}
  *
- * @template M A map of event types to their respective event classes.
+ * @template M A map of event types to their respective event detail types.
  *
  * @example
  * ```typescript
@@ -101,7 +101,7 @@ export interface TypedEventTarget<M extends Record<string, any>> {
 	) => void;
 
 	/**
-	 * Dispatches a synthetic event event to target and returns true if either
+	 * Dispatches a synthetic event to target and returns true if either
 	 * event's cancelable attribute value is false or its preventDefault() method
 	 * was not invoked, and false otherwise.
 	 * @deprecated To ensure type safety use `dispatchTypedEvent` instead.
@@ -112,7 +112,7 @@ export class TypedEventTarget<
 	M extends Record<string, any>,
 > extends EventTarget {
 	/**
-	 * Dispatches a synthetic event event to target and returns true if either
+	 * Dispatches a synthetic event to target and returns true if either
 	 * event's cancelable attribute value is false or its preventDefault() method
 	 * was not invoked, and false otherwise.
 	 */

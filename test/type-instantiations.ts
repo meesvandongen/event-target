@@ -27,7 +27,7 @@ interface InstantiationEvents {
 
 const t = new TypedEventTarget<InstantiationEvents>();
 
-// `undefined` payload: init should be optional; `detail` should be allowed but only as `undefined`.
+// `undefined` payload: init should be optional; `detail` should not be allowed.
 t.dispatchTypedEvent("undef");
 t.dispatchTypedEvent("undef", {});
 t.dispatchTypedEvent("undef", { bubbles: true });
@@ -54,7 +54,7 @@ t.dispatchTypedEvent("text", { detail: "hello" });
 // @ts-expect-error - wrong detail type
 t.dispatchTypedEvent("text", { detail: 123 });
 
-// Union including undefined: should still require init (and detail), because payload isn’t literally `undefined`.
+// Union including undefined: should still require init, but `detail` is optional because the union includes `undefined`.
 // @ts-expect-error - init required
 t.dispatchTypedEvent("maybeText");
 t.dispatchTypedEvent("maybeText", {});
