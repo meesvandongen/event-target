@@ -15,6 +15,8 @@ type Expect<T extends true> = T;
 interface InstantiationEvents {
 	/** Payload is literally `undefined` */
 	undef: undefined;
+	/** Payload is literally `never` */
+	never: never;
 	/** Regular payload */
 	text: string;
 	/** Union payload (detail required) */
@@ -33,6 +35,15 @@ t.dispatchTypedEvent("undef", { bubbles: true });
 t.dispatchTypedEvent("undef", { detail: undefined });
 // @ts-expect-error - wrong detail type
 t.dispatchTypedEvent("undef", { detail: "nope" });
+
+// `never` payload: should behave exactly like `undefined`.
+t.dispatchTypedEvent("never");
+t.dispatchTypedEvent("never", {});
+t.dispatchTypedEvent("never", { bubbles: true });
+// @ts-expect-error - detail may never be present for `never` payload
+t.dispatchTypedEvent("never", { detail: undefined });
+// @ts-expect-error - wrong detail type
+t.dispatchTypedEvent("never", { detail: "nope" });
 
 // Regular payload: init required and must contain correct `detail`.
 // @ts-expect-error - init required for non-`never`/`undefined` payload
@@ -53,7 +64,14 @@ t.dispatchTypedEvent("maybeText", { detail: "hi" });
 
 t.addEventListener("undef", (e) => {
 	type _1 = Expect<Equal<typeof e, Event>>;
-  type _2 = Expect<Equal<typeof e, CustomEvent<undefined>>>;
+	type _2 = Expect<Equal<typeof e, CustomEvent<undefined>>>;
+	// @ts-expect-error - plain Event has no typed detail
+	e.detail;
+});
+
+t.addEventListener("never", (e) => {
+	type _1 = Expect<Equal<typeof e, Event>>;
+	type _2 = Expect<Equal<typeof e, CustomEvent<never>>>;
 	// @ts-expect-error - plain Event has no typed detail
 	e.detail;
 });

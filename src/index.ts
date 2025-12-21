@@ -1,3 +1,9 @@
+export type CustomEventInit<T = any> = EventInit &
+	([T] extends [never] ? {} : T extends undefined ? {} : { detail: T });
+
+export type CustomEvent<T = any> = Event &
+	([T] extends [never] ? {} : T extends undefined ? {} : { detail: T });
+
 /**
  * A function that can be passed to the `listener` parameter of {@link TypedEventTarget.addEventListener} and {@link TypedEventTarget.removeEventListener}.
  *
@@ -8,16 +14,6 @@ export type TypedEventListener<
 	M extends Record<string, any>,
 	T extends keyof M,
 > = (evt: CustomEvent<M[T]>) => void | Promise<void>;
-
-export type CustomEventInit<T = any> = EventInit &
-	(T extends undefined ? {} : { detail: T });
-
-export type CustomEvent<T = any> = Event &
-	(T extends undefined
-		? {}
-		: {
-				detail: T;
-			});
 
 /**
  * An object that can be passed to the `listener` parameter of {@link TypedEventTarget.addEventListener} and {@link TypedEventTarget.removeEventListener}.
@@ -55,8 +51,8 @@ export type TypedEventListenerOrEventListenerObject<
  * @example
  * ```typescript
  * interface MyEventMap {
- *     hello: Event;
- *     time: CustomEvent<number>;
+ *     hello: never;
+ *     time: number;
  * }
  *
  * const eventTarget = new TypedEventTarget<MyEventMap>();
