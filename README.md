@@ -8,17 +8,6 @@ This package exports a single class, `TypedEventTarget<M>`, which behaves like t
 - listeners receive a correctly typed `CustomEvent<Detail>`
 - `dispatchEvent` is **deprecated** (untyped); use `dispatchTypedEvent(type, init?)` instead
 
-## Install
-
-```sh
-npm i @mvd/event-target
-```
-
-Notes:
-
-- ESM package (`"type": "module"`).
-- `typescript` is a peer dependency (v5+).
-
 ## Quick start (standalone instance)
 
 Define an **event map** where each key is an event name and each value is the `detail` payload type.
