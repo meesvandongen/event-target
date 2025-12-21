@@ -13,10 +13,24 @@
 			"default": "./dist/index.js"
 		}
 	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/meesvandongen/event-target.git"
+	},
+	"author": "Mees van Dongen",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/meesvandongen/event-target/issues"
+	},
+	"homepage": "https://github.com/meesvandongen/event-target#readme",
 	"scripts": {
 		"build": "bunup",
-		"prepublishOnly": "bun run build && publint",
-		"typecheck": "tsc --noEmit"
+		"prepublishOnly": "bun run build && bun run publint",
+		"typecheck": "tsc --noEmit",
+		"publint": "publint"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.10",
