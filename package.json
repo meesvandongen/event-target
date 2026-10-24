@@ -33,7 +33,7 @@
 		"publint": "publint"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.3.10",
+		"@biomejs/biome": "2.6.3",
 		"bunup": "^0.16.11",
 		"publint": "^0.3.12"
 	},
