@@ -2,7 +2,7 @@ import { type CustomEvent, TypedEventTarget } from "../src/index";
 
 /**
  * Tiny type-level assertion helpers.
- * If a type check fails, TypeScript will error during `bun run typecheck`.
+ * If a type check fails, TypeScript will error during `pnpm run typecheck`.
  */
 
 type Equal<A, B> =

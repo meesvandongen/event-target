@@ -13,6 +13,10 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
+    // Type-check the examples in test/ against the source, so no build is needed first.
+    "paths": {
+      "@mvd/event-target": ["./src/index.ts"]
+    },
 
     // Best practices
     "strict": true,
