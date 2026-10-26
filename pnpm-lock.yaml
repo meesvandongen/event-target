@@ -176,7 +176,7 @@ importers:
   .:
     dependencies:
       typescript:
-        specifier: ^5
+        specifier: ^5 || ^7.0.0
         version: 5.9.3
     devDependencies:
       publint:
